@@ -103,7 +103,7 @@ body{
   color:var(--ink-mute);margin:6px 0 2px;padding-left:2px;}
 .al-group-lbl:first-child{margin-top:0;}
 .al-item{
-  display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;
+  display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
   padding:7px 9px;border-radius:7px;border:1px solid transparent;
   cursor:pointer;transition:.12s;
 }
@@ -236,7 +236,7 @@ body{
 }
 .grid-row{
   display:grid;
-  grid-template-columns: 92px minmax(0,1.5fr) 108px 108px 108px 82px 118px 64px minmax(0,1.3fr);
+  grid-template-columns: 92px minmax(0,1.5fr) 108px 108px 108px 82px 118px minmax(0,1.3fr);
   gap:10px;align-items:start;
 }
 .thd{
@@ -344,7 +344,7 @@ tr.detail-row td{padding:0;border-bottom:1px solid var(--line-soft);}
 .dp-events-hd{font-size:.68rem;font-weight:800;color:#744210;text-transform:uppercase;letter-spacing:.04em;
   margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .dp-event{
-  display:grid;grid-template-columns:18px 1fr auto auto;gap:10px;align-items:start;
+  display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:start;
   padding:9px 10px 9px 6px;border-radius:7px;background:#fff;border:1px solid #f0d49a;
   margin-bottom:6px;border-left:4px solid var(--amber);
 }
@@ -363,7 +363,7 @@ tr.detail-row td{padding:0;border-bottom:1px solid var(--line-soft);}
 .dp-children-hd{font-size:.68rem;font-weight:800;color:var(--pvep-green-dark);text-transform:uppercase;letter-spacing:.04em;
   margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .dp-child{
-  display:grid;grid-template-columns:70px 1fr auto auto;gap:12px;align-items:center;
+  display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;
   padding:8px 10px;border-radius:7px;background:#fff;border:1px solid var(--line-soft);margin-bottom:6px;
 }
 .dp-child-code{font-size:.7rem;font-weight:800;color:var(--code);}
@@ -398,7 +398,7 @@ tr.detail-row td{padding:0;border-bottom:1px solid var(--line-soft);}
   .rail-hd{display:none;}
   .rail-item{flex:none;border-left:none;border-bottom:3px solid transparent;}
   .rail-item.active{border-left:none;border-bottom-color:var(--pvep-green-dark);}
-  .grid-row{grid-template-columns: 82px minmax(0,1.3fr) 96px 96px 96px 76px 108px 58px minmax(0,1.1fr);}
+  .grid-row{grid-template-columns: 82px minmax(0,1.3fr) 96px 96px 96px 76px 108px minmax(0,1.1fr);}
 }
 @media (max-width:900px){
   .grid-row{grid-template-columns: 76px minmax(0,1fr) 1fr;}
@@ -541,7 +541,6 @@ tr.detail-row td{padding:0;border-bottom:1px solid var(--line-soft);}
             <div data-sort="tvBTGD">TV BTGĐ phụ trách<svg class="th-sort ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
             <div data-sort="dueDate">Hạn<svg class="th-sort ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
             <div data-sort="status">Trạng thái<svg class="th-sort ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-            <div data-sort="progress">% HT<svg class="th-sort ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
             <div data-sort="output">Sản phẩm yêu cầu<svg class="th-sort ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
           </div>
         </div>
@@ -651,7 +650,7 @@ function toTask(r){
     deadline: r['Thời hạn'],
     dueDate: r['Due_End_Date'],
     status: r['Trạng thái'],
-    progress: (pct===null || pct===undefined) ? 0 : Math.round(pct*100),
+    progress: r['Trạng thái']==='Hoàn thành' ? 100 : 0, /* tính theo số lượng việc hoàn thành */
     note: r['Hiện trạng triển khai'],
     link: r['Link Sản phẩm'],
     directive: r['Ý kiến chỉ đạo của Lãnh đạo'],
@@ -901,7 +900,6 @@ function renderAlerts(){
         <div class="al-unit">${esc(unitLabel(t.unit))}</div>
       </div>
       <div class="al-days">${badgeTxt}</div>
-      <div class="al-pct">${t.progress||0}%</div>
     </div>`;
   }
 
@@ -1147,7 +1145,6 @@ function detailPanelHtml(t){
       <div class="dp-field"><div class="dp-lbl">TV BTGĐ phụ trách</div><div class="dp-val">${esc(lead2)||'—'}</div></div>
       <div class="dp-field"><div class="dp-lbl">Hạn</div><div class="dp-val">${dateStr?esc(dateStr):(esc(t.deadline)||'—')}${(dateStr && t.deadline)?` <span style="color:var(--ink-mute);">(${esc(t.deadline)})</span>`:''}</div></div>
       <div class="dp-field"><div class="dp-lbl">Trạng thái</div><div class="dp-val"><span class="badge ${SCC[t.status]||'b-doing'}"><span class="d"></span>${esc(t.status)}</span></div></div>
-      <div class="dp-field"><div class="dp-lbl">Tỷ lệ hoàn thành</div><div class="dp-val"><div class="pbar" style="width:120px;"><div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${pctColor};"></div></div><div class="pbar-txt">${pct}%</div></div></div></div>
 
       <div class="dp-field dp-full"><div class="dp-lbl">Nhiệm vụ cụ thể</div><div class="dp-val">${esc(t.task)}</div></div>
       <div class="dp-field dp-full"><div class="dp-lbl">Sản phẩm yêu cầu</div><div class="dp-val">${esc(t.output)||'—'}</div></div>
@@ -1163,7 +1160,6 @@ function detailPanelHtml(t){
           ${attachments.map((a,i)=>`<span class="dp-attach-chip"><a href="${a.dataUrl}" download="${esc(a.name)}"><i class="ic" viewBox="0 0 24 24" style="width:.75em;height:.75em;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path></i>${esc(a.name)}</a><span class="sz">${fmtSize(a.size)}</span><button class="rm" data-remove-idx="${i}" data-remove-code="${esc(t.code)}" title="Gỡ file">✕</button></span>`).join('')}
         </div>
         <button class="dp-attach-btn" data-attach-code="${esc(t.code)}"><i class="ic" viewBox="0 0 24 24" style="width:.8em;height:.8em;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></i>Đính kèm file</button>
-        <div class="dp-attach-hint">Tối đa 5MB/file · lưu trên trình duyệt này, không đồng bộ giữa các máy</div>
       </div>
     </div>`;
 
@@ -1177,7 +1173,6 @@ function detailPanelHtml(t){
         <div class="dp-child-code">${esc(k.subCode||k.code)}</div>
         <div class="dp-child-name">${esc(k.task)}</div>
         <span class="badge ${SCC[k.status]||'b-doing'}"><span class="d"></span>${esc(k.status)}</span>
-        <div class="dp-child-pct" style="color:${kColor};">${kpct}%</div>
       </div>`;
     });
     html += `</div>`;
@@ -1198,7 +1193,6 @@ function detailPanelHtml(t){
           <div class="dp-event-date${ev.status==='Quá hạn'?' past':''}">${esc(ev.subCode||ev.code)}${evDate?` · ${esc(evDate)}`:''}</div>
         </div>
         <span class="badge ${SCC[ev.status]||'b-doing'}"><span class="d"></span>${esc(ev.status)}</span>
-        <div class="dp-child-pct" style="color:${evColor};">${evPct}%</div>
       </div>`;
     });
     html += `</div>`;
@@ -1284,7 +1278,6 @@ function renderTable(){
         <div><div class="t-lead-name">${esc(lead2)}</div></div>
         <div><div class="t-due">${dateStr}</div></div>
         <div><span class="badge ${scc}"><span class="d"></span>${esc(t.status)}</span></div>
-        <div><div class="pbar"><div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${pctColor};"></div></div><div class="pbar-txt">${pct}%</div></div></div>
         <div><div class="t-out">${esc(t.output)||'—'}</div>${outputInlineIndicators(t)}</div>
       </div>
     </div>`;
